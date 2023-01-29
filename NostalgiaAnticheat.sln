@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgiaAnticheat", "NostalgiaAnticheat.csproj", "{C005B623-2555-4616-BF2A-23FFF0FDB410}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C005B623-2555-4616-BF2A-23FFF0FDB410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C005B623-2555-4616-BF2A-23FFF0FDB410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C005B623-2555-4616-BF2A-23FFF0FDB410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C005B623-2555-4616-BF2A-23FFF0FDB410}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFD5A7B9-3982-400A-B4B4-D2EF86B1C7CA}
+	EndGlobalSection
+EndGlobal
