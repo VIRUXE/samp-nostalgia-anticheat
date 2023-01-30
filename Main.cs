@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,8 +19,6 @@ namespace NostalgiaAnticheat
         {
             InitializeComponent();
 
-            notifyIcon.Text = this.Text;
-
             GTASA.StartWatchDog();
 
             GTASA.OnGameStateChanged += (state) =>
@@ -30,7 +29,26 @@ namespace NostalgiaAnticheat
                 }));
             };
 
-            lblGTAState.Text = "Estado do GTA:SA: " + GTASA.CurrentState.ToString();
+            lblGTAState.Text = "Estado do GTA:SA: Nenhum";
+
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    foreach (Process process in Process.GetProcesses())
+                    {
+                        long memory = process.WorkingSet64 / 1024 / 1024; // Convert to MB
+
+                        // GTA:SA process uses between 310 and 320 MB of memory
+                        if (memory > 310 && memory < 320)
+                        {
+                            Debug.WriteLine("{0} - {1} MB", process.ProcessName, memory);
+                        }
+                    }
+                }
+            }).Start();
+
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -51,13 +69,13 @@ namespace NostalgiaAnticheat
             switch (GTASA.CurrentState)
             {
                 case GTASA.GameState.None:
-                    lblGTAState.Text = prefix + "GTA:SA is not running";
+                    lblGTAState.Text = prefix + "Nenhum";
                     break;
                 case GTASA.GameState.GTASA:
-                    lblGTAState.Text = prefix + "GTA:SA is running";
+                    lblGTAState.Text = prefix + "Rodando";
                     break;
                 case GTASA.GameState.SAMP:
-                    lblGTAState.Text = prefix + "GTA:SA is running with SAMP";
+                    lblGTAState.Text = prefix + "Rodando (SAMP)";
                     break;
             }
         }
@@ -150,11 +168,6 @@ namespace NostalgiaAnticheat
             {
                 listBox3.Items.Add(String.Format("{0} - {1}", file.Key, file.Value));
             }*/
-        }
-
-        private void lnkSource_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/VIRUXEParty/samp_nostalgia-anticheat");
         }
     }
 }

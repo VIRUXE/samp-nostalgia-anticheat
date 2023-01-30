@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
-using System.Windows;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
-using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace NostalgiaAnticheat
 {
@@ -61,14 +57,49 @@ namespace NostalgiaAnticheat
 
             processWatchdog.OnProcessOpened += (processId) =>
             {
+                if (CurrentProcessId != 0) Process.GetProcessById(processId).Kill(); 
+
+                if (CurrentState != GameState.None) return;
+                
                 CurrentProcessId = processId;
                 CurrentState = GameState.GTASA;
 
-                OnGameStateChanged?.Invoke(CurrentState); // 
+                OnGameStateChanged?.Invoke(CurrentState);
+
+                // Create a Thread to loop check the game modules to see when SA-MP get's injected or not
+                new Thread(() =>
+                {
+                    while (CurrentState != GameState.None)
+                    {
+                        ProcessModuleCollection modules = GetModules();
+
+                        if (modules == null) return;
+
+                        foreach (ProcessModule module in modules)
+                        {
+                            if (module.ModuleName == "samp.dll")
+                            {
+                                if (CurrentState == GameState.SAMP) break; // Don't change the state if it's already SAMP
+
+                                CurrentState = GameState.SAMP;
+
+                                OnGameStateChanged?.Invoke(CurrentState);
+
+                                break;
+                            }
+                        }
+
+                        Thread.Sleep(1000);
+                    }
+                }).Start();
             };
 
             processWatchdog.OnProcessClosed += () =>
             {
+                if (Process.GetProcessesByName("gta_sa").Length > 1) return; // Don't change the state if there's another GTA:SA process running
+
+                if (CurrentState == GameState.None) return;
+                
                 CurrentProcessId = 0;
                 CurrentState = GameState.None;
 
@@ -76,6 +107,11 @@ namespace NostalgiaAnticheat
             };
 
             processWatchdog.Start();
+        }
+
+        public static Process GetProcess()
+        {
+            return Process.GetProcessById(CurrentProcessId);
         }
 
         public static string GetExecutablePath()
@@ -97,6 +133,21 @@ namespace NostalgiaAnticheat
             process.Kill();
         }
 
+        // Get the executable's modules
+        public static ProcessModuleCollection GetModules()
+        {
+            try
+            {
+                Process process = Process.GetProcessById(CurrentProcessId);
+
+                return process.Modules;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        
         public static Bitmap TakeScreenshot()
         {
             // Grab the GTA SA process
@@ -123,17 +174,6 @@ namespace NostalgiaAnticheat
             }
 
             return screenshot;
-        }
-
-        // Get the executable's modules
-        public static ProcessModuleCollection GetModules()
-        {
-            Process process = Process.GetProcessById(CurrentProcessId);
-
-            if (process == null)
-                return null;
-
-            return process.Modules;
         }
 
         public enum GameSettings // byte offsets for each setting

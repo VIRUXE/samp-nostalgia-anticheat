@@ -28,10 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.lblConnectionState = new System.Windows.Forms.Label();
-            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.lblGTAState = new System.Windows.Forms.Label();
             this.lnkSource = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
@@ -53,18 +51,6 @@
             this.lblGTAState.Size = new System.Drawing.Size(133, 13);
             this.lblGTAState.TabIndex = 1;
             this.lblGTAState.Text = "Estado do GTA: null";
-            // 
-            // lnkSource
-            // 
-            this.lnkSource.AutoSize = true;
-            this.lnkSource.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lnkSource.Location = new System.Drawing.Point(12, 47);
-            this.lnkSource.Name = "lnkSource";
-            this.lnkSource.Size = new System.Drawing.Size(92, 13);
-            this.lnkSource.TabIndex = 2;
-            this.lnkSource.TabStop = true;
-            this.lnkSource.Text = "Código Fonte";
-            this.lnkSource.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkSource_LinkClicked);
             // 
             // Main
             // 
@@ -91,7 +77,6 @@
         #endregion
 
         private System.Windows.Forms.Label lblConnectionState;
-        private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Label lblGTAState;
         private System.Windows.Forms.LinkLabel lnkSource;
     }
