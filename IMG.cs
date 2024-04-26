@@ -6,20 +6,15 @@ using IMGSharp;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace NostalgiaAnticheat
-{
-    internal class IMG
-    {
-        public static Dictionary<string, int> Load(string filePath)
-        {
+namespace NostalgiaAnticheat {
+    internal class IMG {
+        public static Dictionary<string, int> Load(string filePath) {
             var files = new Dictionary<string, int>();
-            
+
             IMGArchive img = IMGFile.OpenRead(filePath);
 
-            foreach (IMGArchiveEntry entry in img.Entries)
-            {
-                if (entry.Name.EndsWith(".txd"))
-                {
+            foreach (IMGArchiveEntry entry in img.Entries) {
+                if (entry.Name.EndsWith(".txd")) {
                     // Send a formatted message to the Debug Console
                     Debug.WriteLine(System.String.Format("{0} ({1} bytes)", entry.Name, entry.Length));
 

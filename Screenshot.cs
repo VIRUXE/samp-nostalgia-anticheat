@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NostalgiaAnticheat
-{
-    internal class Screenshot
-    {
+namespace NostalgiaAnticheat {
+    internal class Screenshot {
         [StructLayout(LayoutKind.Sequential)]
-        private struct Rect
-        {
+        private struct Rect {
             public int Left;
             public int Top;
             public int Right;
@@ -35,9 +28,7 @@ namespace NostalgiaAnticheat
         [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
-
-        public static Bitmap CaptureWindow(IntPtr handle)
-        {
+        public static Bitmap CaptureWindow(IntPtr handle) {
             var rect = new Rect();
             GetClientRect(handle, ref rect);
 
@@ -47,16 +38,14 @@ namespace NostalgiaAnticheat
             var bounds = new Rectangle(point.X, point.Y, rect.Right, rect.Bottom);
 
             // if the window is not maximized, we need to adjust the bounds
-            if (GetWindowLong(handle, -16) != 0x1000000)
-            {
+            if (GetWindowLong(handle, -16) != 0x1000000) {
                 bounds.Width += 15;
                 bounds.Height += 50;
             }
 
             var result = new Bitmap(bounds.Width, bounds.Height);
 
-            using (var graphics = Graphics.FromImage(result))
-            {
+            using (var graphics = Graphics.FromImage(result)) {
                 IntPtr dc = graphics.GetHdc();
                 bool success = PrintWindow(handle, dc, 0);
                 graphics.ReleaseHdc(dc);
@@ -65,10 +54,6 @@ namespace NostalgiaAnticheat
             return result;
         }
 
-        public static byte[] ImageToByte(Image img)
-        {
-            ImageConverter converter = new ImageConverter();
-            return (byte[])converter.ConvertTo(img, typeof(byte[]));
-        }
+        public static byte[] ImageToByte(Image img) => (byte[])new ImageConverter().ConvertTo(img, typeof(byte[]));
     }
 }

@@ -4,14 +4,12 @@ using System.Linq;
 using System.Threading;
 using ThreadState = System.Threading.ThreadState;
 
-namespace NostalgiaAnticheat
-{
+namespace NostalgiaAnticheat {
     public delegate void ProcessOpenedEventHandler(int processId);
 
     public delegate void ProcessClosedEventHandler();
 
-    public class ProcessWatchdog
-    {
+    public class ProcessWatchdog {
         // Default sleep time to minimize CPU usage
         private const int DefaultWorkerSleepTime = 1500;
 
@@ -35,13 +33,11 @@ namespace NostalgiaAnticheat
         /// <param name="processName">Process to watch</param>
         /// <param name="workerThreadSleepTime">Milliseconds to sleep between each iteration on system process.
         /// Lower values will increase CPU usage</param>
-        public ProcessWatchdog(string processName, int workerThreadSleepTime = DefaultWorkerSleepTime)
-        {
+        public ProcessWatchdog(string processName, int workerThreadSleepTime = DefaultWorkerSleepTime) {
             this._processName = processName;
             this._workerThreadSleepTime = workerThreadSleepTime;
 
-            lock (RegisteredWatchdogsLock)
-            {
+            lock (RegisteredWatchdogsLock) {
                 if (_watchdogWorkerThread == null)
                     _watchdogWorkerThread = new Thread(ProcessWatchdogWorker) { IsBackground = true };
 
@@ -50,10 +46,8 @@ namespace NostalgiaAnticheat
             }
         }
 
-        public void Start()
-        {
-            lock (RegisteredWatchdogsLock)
-            {
+        public void Start() {
+            lock (RegisteredWatchdogsLock) {
                 _registeredWatchdogs.Add(this);
 
                 if (_watchdogWorkerThread.ThreadState == ThreadState.Stopped)
@@ -64,10 +58,8 @@ namespace NostalgiaAnticheat
             }
         }
 
-        public void Stop()
-        {
-            lock (RegisteredWatchdogsLock)
-            {
+        public void Stop() {
+            lock (RegisteredWatchdogsLock) {
                 _registeredWatchdogs.Remove(this);
 
                 if (_registeredWatchdogs.Count == 0 && _watchdogWorkerThread.ThreadState == ThreadState.Background)
@@ -75,43 +67,33 @@ namespace NostalgiaAnticheat
             }
         }
 
-        private void Update(IEnumerable<Process> runningProcesses)
-        {
+        private void Update(IEnumerable<Process> runningProcesses) {
             var matchingProcess = runningProcesses.FirstOrDefault(process => process.ProcessName.Equals(this._processName));
             var isProcessOpen = matchingProcess != null;
 
-            if (isProcessOpen && !this._isProcessCurrentlyOpen)
-            {
+            if (isProcessOpen && !this._isProcessCurrentlyOpen) {
                 this._isProcessCurrentlyOpen = true;
                 this.OnProcessOpened?.Invoke(matchingProcess.Id);
-            }
-            else if (!isProcessOpen && _isProcessCurrentlyOpen)
-            {
+            } else if (!isProcessOpen && _isProcessCurrentlyOpen) {
                 this._isProcessCurrentlyOpen = false;
                 this.OnProcessClosed?.Invoke();
             }
         }
 
-        private static int GetWatchdogsCountSafe()
-        {
-            lock (RegisteredWatchdogsLock)
-            {
+        private static int GetWatchdogsCountSafe() {
+            lock (RegisteredWatchdogsLock) {
                 return _registeredWatchdogs.Count;
             }
         }
 
-        private static void ProcessWatchdogWorker()
-        {
-            while (GetWatchdogsCountSafe() > 0)
-            {
+        private static void ProcessWatchdogWorker() {
+            while (GetWatchdogsCountSafe() > 0) {
                 int minimalSleepTime;
 
-                lock (RegisteredWatchdogsLock)
-                {
+                lock (RegisteredWatchdogsLock) {
                     var runningProcesses = Process.GetProcesses();
 
-                    foreach (var watchdog in _registeredWatchdogs)
-                    {
+                    foreach (var watchdog in _registeredWatchdogs) {
                         watchdog.Update(runningProcesses);
                     }
 
