@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.lblConnectionState = new System.Windows.Forms.Label();
             this.lblGTAState = new System.Windows.Forms.Label();
-            this.lnkSource = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // lblConnectionState
@@ -57,7 +56,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(313, 69);
-            this.Controls.Add(this.lnkSource);
             this.Controls.Add(this.lblGTAState);
             this.Controls.Add(this.lblConnectionState);
             this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -78,7 +76,6 @@
 
         private System.Windows.Forms.Label lblConnectionState;
         private System.Windows.Forms.Label lblGTAState;
-        private System.Windows.Forms.LinkLabel lnkSource;
     }
 }
 
