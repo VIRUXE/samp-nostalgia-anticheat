@@ -59,27 +59,19 @@ namespace NostalgiaAnticheat {
         // This is linked to their SAMP/GTA on their computer
         // It is a non-reversible(lossy) hash derived from information about your San Andreas installation path.
         // Returns a string with a maximum of 40 characters
-        public static string GetPlayerComputerId() {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GTA San Andreas User Files\\SAMP";
-            string gpci = string.Empty;
+		public static string GetPlayerComputerId() {
+			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GTA San Andreas User Files", "SAMP", "gta_sa.set");
 
-            if (Directory.Exists(path)) {
-                string[] files = Directory.GetFiles(path);
-                foreach (string file in files) {
-                    if (file.Contains("gta_sa.set")) {
-                        string[] lines = File.ReadAllLines(file);
-                        foreach (string line in lines) {
-                            if (line.Contains("gta_sa.exe")) {
-                                string[] split = line.Split('=');
-                                string gta_sa_path = split[1];
-                                gpci = gta_sa_path;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return gpci;
-        }
+			if (!File.Exists(path)) return string.Empty;
+
+			foreach (string line in File.ReadLines(path)) {
+				if (line.Contains("gta_sa.exe")) {
+					string[] split = line.Split('=');
+					return split.Length > 1 ? split[1].Trim() : string.Empty;
+				}
+			}
+
+			return string.Empty;
+		}
     }
 }
